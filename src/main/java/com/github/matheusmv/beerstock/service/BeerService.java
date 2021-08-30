@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class BeerService {
 
     private final BeerRepository beerRepository;
-    private final BeerMapper beerMapper = BeerMapper.INSTANCE;
+    private final BeerMapper beerMapper;
 
     public BeerDTO createBeer(BeerDTO beerDTO) throws BeerAlreadyRegisteredException {
         verifyIfIsAlreadyRegistered(beerDTO.getName());
