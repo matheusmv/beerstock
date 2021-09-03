@@ -21,7 +21,7 @@ public class BeerService {
     private final BeerRepository beerRepository;
     private final BeerMapper beerMapper;
 
-    public BeerDTO createBeer(BeerDTO beerDTO) throws BeerAlreadyRegisteredException {
+    public BeerDTO createBeer(BeerDTO beerDTO) {
         verifyIfIsAlreadyRegistered(beerDTO.getName());
 
         var beer = beerMapper.toModel(beerDTO);
@@ -30,7 +30,7 @@ public class BeerService {
         return beerMapper.toDTO(savedBeer);
     }
 
-    public BeerDTO findByName(String name) throws BeerNotFoundException {
+    public BeerDTO findByName(String name) {
         return beerRepository.findByName(name)
                 .map(beerMapper::toDTO)
                 .orElseThrow(() -> new BeerNotFoundException(name));
@@ -43,13 +43,13 @@ public class BeerService {
                 .collect(Collectors.toList());
     }
 
-    public void deleteById(Long id) throws BeerNotFoundException {
+    public void deleteById(Long id) {
         verifyIfExists(id);
 
         beerRepository.deleteById(id);
     }
 
-    private void verifyIfIsAlreadyRegistered(String name) throws BeerAlreadyRegisteredException {
+    private void verifyIfIsAlreadyRegistered(String name) {
         var beer = beerRepository.findByName(name);
 
         if (beer.isPresent()) {
@@ -57,12 +57,12 @@ public class BeerService {
         }
     }
 
-    private Beer verifyIfExists(Long id) throws BeerNotFoundException {
+    private Beer verifyIfExists(Long id) {
         return beerRepository.findById(id)
                 .orElseThrow(() -> new BeerNotFoundException(id));
     }
 
-    public BeerDTO increment(Long id, int quantityToIncrement) throws BeerNotFoundException, BeerStockExceededException {
+    public BeerDTO increment(Long id, int quantityToIncrement) {
         var beerToIncrementStock = verifyIfExists(id);
         var quantityAfterIncrement = quantityToIncrement + beerToIncrementStock.getQuantity();
 

@@ -2,9 +2,6 @@ package com.github.matheusmv.beerstock.controller;
 
 import com.github.matheusmv.beerstock.dto.BeerDTO;
 import com.github.matheusmv.beerstock.dto.QuantityDTO;
-import com.github.matheusmv.beerstock.exception.BeerAlreadyRegisteredException;
-import com.github.matheusmv.beerstock.exception.BeerNotFoundException;
-import com.github.matheusmv.beerstock.exception.BeerStockExceededException;
 import com.github.matheusmv.beerstock.service.BeerService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,12 +28,12 @@ public class BeerController implements BeerControllerDocs {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public BeerDTO createBeer(@RequestBody @Valid BeerDTO beerDTO) throws BeerAlreadyRegisteredException {
+    public BeerDTO createBeer(@RequestBody @Valid BeerDTO beerDTO) {
         return beerService.createBeer(beerDTO);
     }
 
     @GetMapping("/{name}")
-    public BeerDTO findByName(@PathVariable String name) throws BeerNotFoundException {
+    public BeerDTO findByName(@PathVariable String name) {
         return beerService.findByName(name);
     }
 
@@ -47,12 +44,12 @@ public class BeerController implements BeerControllerDocs {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteById(@PathVariable Long id) throws BeerNotFoundException {
+    public void deleteById(@PathVariable Long id) {
         beerService.deleteById(id);
     }
 
     @PatchMapping("/{id}/increment")
-    public BeerDTO increment(@PathVariable Long id, @RequestBody @Valid QuantityDTO quantityDTO) throws BeerNotFoundException, BeerStockExceededException {
+    public BeerDTO increment(@PathVariable Long id, @RequestBody @Valid QuantityDTO quantityDTO) {
         return beerService.increment(id, quantityDTO.getQuantity());
     }
 }
