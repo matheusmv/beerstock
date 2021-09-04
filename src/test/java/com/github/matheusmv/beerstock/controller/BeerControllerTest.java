@@ -37,7 +37,6 @@ public class BeerControllerTest {
     private static final long VALID_BEER_ID = 1L;
     private static final long INVALID_BEER_ID = 2L;
     private static final String BEER_API_SUB_PATH_INCREMENT_URL = "/increment";
-    private static final String BEER_API_SUB_PATH_DECREMENT_URL = "/decrement";
 
     private MockMvc mockMvc;
 
@@ -174,7 +173,7 @@ public class BeerControllerTest {
     }
 
     @Test
-    void whenPATCHIsCalledToIncrementDiscountThenOKstatusIsReturned() throws Exception {
+    void whenPATCHIsCalledToIncrementDiscountThenOKStatusIsReturned() throws Exception {
         var quantityDTO = QuantityDTO.builder()
                 .quantity(10)
                 .build();
