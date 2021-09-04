@@ -67,4 +67,12 @@ public class BeerController implements BeerControllerDocs {
 
         return ResponseEntity.ok().body(beer);
     }
+
+    @PatchMapping("/{id}/decrement")
+    public ResponseEntity<BeerDTO> decrement(@PathVariable Long id,
+                                             @RequestBody @Valid QuantityDTO quantityDTO) {
+        var beer = beerService.decrement(id, quantityDTO.getQuantity());
+
+        return ResponseEntity.ok().body(beer);
+    }
 }

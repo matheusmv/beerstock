@@ -5,6 +5,7 @@ import com.github.matheusmv.beerstock.entity.Beer;
 import com.github.matheusmv.beerstock.exception.BeerAlreadyRegisteredException;
 import com.github.matheusmv.beerstock.exception.BeerNotFoundException;
 import com.github.matheusmv.beerstock.exception.BeerStockExceededException;
+import com.github.matheusmv.beerstock.exception.BeerStockInsufficientException;
 import com.github.matheusmv.beerstock.mapper.BeerMapper;
 import com.github.matheusmv.beerstock.repository.BeerRepository;
 import lombok.AllArgsConstructor;
@@ -67,7 +68,7 @@ public class BeerService {
         var quantityAfterIncrement = quantityToIncrement + beerToIncrementStock.getQuantity();
 
         if (quantityAfterIncrement <= beerToIncrementStock.getMax()) {
-            beerToIncrementStock.setQuantity(beerToIncrementStock.getQuantity() + quantityToIncrement);
+            beerToIncrementStock.setQuantity(quantityAfterIncrement);
 
             var incrementedBeerStock = beerRepository.save(beerToIncrementStock);
 
@@ -75,5 +76,20 @@ public class BeerService {
         }
 
         throw new BeerStockExceededException(id, quantityToIncrement);
+    }
+
+    public BeerDTO decrement(Long id, int quantityToDecrement) {
+        var beerToDecrementStock = verifyIfExists(id);
+        var quantityAfterDecrement = beerToDecrementStock.getQuantity() - quantityToDecrement;
+
+        if (quantityAfterDecrement >= 0) {
+            beerToDecrementStock.setQuantity(quantityAfterDecrement);
+
+            var decrementedBeerStock = beerRepository.save(beerToDecrementStock);
+
+            return beerMapper.toDTO(decrementedBeerStock);
+        }
+
+        throw new BeerStockInsufficientException(id, quantityToDecrement);
     }
 }
