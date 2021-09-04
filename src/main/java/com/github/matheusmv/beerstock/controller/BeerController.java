@@ -5,7 +5,7 @@ import com.github.matheusmv.beerstock.dto.QuantityDTO;
 import com.github.matheusmv.beerstock.service.BeerService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -27,29 +27,44 @@ public class BeerController implements BeerControllerDocs {
     private final BeerService beerService;
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public BeerDTO createBeer(@RequestBody @Valid BeerDTO beerDTO) {
-        return beerService.createBeer(beerDTO);
+    public ResponseEntity<BeerDTO> createBeer(@RequestBody @Valid BeerDTO beerDTO) {
+
+        var newBeer = beerService.createBeer(beerDTO);
+        var uri = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(newBeer.getId())
+                .toUri();
+
+        return ResponseEntity.created(uri).body(newBeer);
     }
 
     @GetMapping("/{name}")
-    public BeerDTO findByName(@PathVariable String name) {
-        return beerService.findByName(name);
+    public ResponseEntity<BeerDTO> findByName(@PathVariable String name) {
+        var beer = beerService.findByName(name);
+
+        return ResponseEntity.ok().body(beer);
     }
 
     @GetMapping
-    public List<BeerDTO> listBeers() {
-        return beerService.listAll();
+    public ResponseEntity<List<BeerDTO>> listBeers() {
+        var listOfBeers = beerService.listAll();
+
+        return ResponseEntity.ok().body(listOfBeers);
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteById(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         beerService.deleteById(id);
+
+        return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{id}/increment")
-    public BeerDTO increment(@PathVariable Long id, @RequestBody @Valid QuantityDTO quantityDTO) {
-        return beerService.increment(id, quantityDTO.getQuantity());
+    public ResponseEntity<BeerDTO> increment(@PathVariable Long id,
+                                             @RequestBody @Valid QuantityDTO quantityDTO) {
+        var beer = beerService.increment(id, quantityDTO.getQuantity());
+
+        return ResponseEntity.ok().body(beer);
     }
 }

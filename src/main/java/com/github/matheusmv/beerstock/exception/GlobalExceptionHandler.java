@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BeerAlreadyRegisteredException.class)
     public ResponseEntity<StandardError> beerAlreadyRegisteredException(BeerAlreadyRegisteredException exception,
                                                                         HttpServletRequest request) {
-        var status = HttpStatus.NOT_FOUND;
+        var status = HttpStatus.BAD_REQUEST;
         var error = getStandardError(exception, request, status);
 
         return ResponseEntity.status(status).body(error);
@@ -32,7 +32,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BeerStockExceededException.class)
     public ResponseEntity<StandardError> BeerStockExceededException(BeerStockExceededException exception,
                                                                     HttpServletRequest request) {
-        var status = HttpStatus.NOT_FOUND;
+        var status = HttpStatus.BAD_REQUEST;
         var error = getStandardError(exception, request, status);
 
         return ResponseEntity.status(status).body(error);

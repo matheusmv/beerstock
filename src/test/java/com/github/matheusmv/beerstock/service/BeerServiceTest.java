@@ -2,6 +2,7 @@ package com.github.matheusmv.beerstock.service;
 
 import com.github.matheusmv.beerstock.builder.BeerDTOBuilder;
 import com.github.matheusmv.beerstock.exception.BeerAlreadyRegisteredException;
+import com.github.matheusmv.beerstock.exception.BeerNotFoundException;
 import com.github.matheusmv.beerstock.mapper.BeerMapper;
 import com.github.matheusmv.beerstock.repository.BeerRepository;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class BeerServiceTest {
 
-    private static final long INVALID_BEER_ID = 1L;
+    private static final long VALID_BEER_ID = 1L;
 
     @Mock
     private BeerRepository beerRepository;
@@ -65,5 +66,32 @@ public class BeerServiceTest {
 
         // then
         assertThrows(BeerAlreadyRegisteredException.class, () -> beerService.createBeer(expectedBeerDTO));
+    }
+
+    @Test
+    void whenValidBeerIsGivenThenReturnABeer() {
+        // given
+        var expectedFoundBeerDTO = BeerDTOBuilder.builder().build().toBeerDTO();
+        var expectedFoundBeer = beerMapper.toModel(expectedFoundBeerDTO);
+
+        // when
+        when(beerRepository.findByName(expectedFoundBeer.getName())).thenReturn(Optional.of(expectedFoundBeer));
+
+        // then
+        var foundBeerDTO = beerService.findByName(expectedFoundBeerDTO.getName());
+
+        assertThat(foundBeerDTO, is(equalTo(expectedFoundBeerDTO)));
+    }
+
+    @Test
+    void whenNoRegisteredBeerNameIsGivenThenThrowAnException() {
+        // given
+        var expectedFoundBeerDTO = BeerDTOBuilder.builder().build().toBeerDTO();
+
+        // when
+        when(beerRepository.findByName(expectedFoundBeerDTO.getName())).thenReturn(Optional.empty());
+
+        // then
+        assertThrows(BeerNotFoundException.class, () -> beerService.findByName(expectedFoundBeerDTO.getName()));
     }
 }
